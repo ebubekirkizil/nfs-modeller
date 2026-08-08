@@ -24,8 +24,12 @@ import { useEffect, useRef } from "react";
  */
 
 const ROWS = 4;
-/** Satır başına tur süresi (sn). Farklı hızlar derinlik hissi verir. */
-const DURATIONS = [58, 74, 50, 66];
+/**
+ * Satır başına tur süresi (sn) — büyük değer = yavaş akış.
+ * Satırlar arasındaki fark bilinçli: aynı hızda akarlarsa ızgara tek bir blok
+ * gibi kayıyor, farklı hızlarda derinlik hissi oluşuyor.
+ */
+const DURATIONS = [100, 128, 86, 114];
 
 export type GridMotionProps = {
   /** Görsel yolları. Her satır listeyi farklı bir noktadan başlatır. */

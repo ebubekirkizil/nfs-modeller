@@ -133,7 +133,7 @@ export default function CardPage() {
           initial="hidden"
           animate="visible"
           variants={container}
-          className="flex w-full flex-col items-center gap-8 rounded-3xl border border-border/60 bg-background/85 p-6 shadow-2xl backdrop-blur-2xl sm:p-8 dark:bg-background/80"
+          className="flex w-full flex-col items-center gap-8 rounded-3xl border border-border/60 bg-background/85 p-6 shadow-2xl backdrop-blur-md sm:p-8 dark:bg-background/80"
         >
           <motion.div
             variants={item}
