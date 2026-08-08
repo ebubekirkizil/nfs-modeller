@@ -42,6 +42,11 @@
 }
 
 :root {
+  /* Tarayıcı çubuklarının (iOS durum çubuğu / araç çubuğu) rengi.
+     Safari o şeritlere sayfanın piksellerini değil, düz bir renk basar; bu
+     yüzden değerler gradyanın ekran kenarındaki tonundan örneklendi ki çubuklar
+     arka planın devamı gibi görünsün. Ayrıca aşırı kaydırmada görünen zemin. */
+  --bar: #e7e4f0;
   --radius: 0.625rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
@@ -81,6 +86,8 @@
    yüzeylere düz griden daha zengin bir his verir ve arka plandaki
    gökkuşağının moru ile aynı hue ailesinde kalır. */
 .dark {
+  /* Gradyanın koyu temadaki kenar tonundan ölçüldü (#1a1c32 / #1e202c). */
+  --bar: #1c1e30;
   --background: oklch(0.13 0.008 265);
   --foreground: oklch(0.97 0.003 265);
   --card: oklch(0.19 0.008 265);
@@ -125,9 +132,9 @@
        arka planın dışını açığa çıkarıp altındaki düz gövde rengini bir an
        gösteriyordu — "arka plan kayboldu, sonra geri geldi" hissi bundandı. */
     overscroll-behavior-y: none;
-    /* Esnemenin engellenemediği durumlarda görünen renk en azından temanın
-       kendi zemini olsun. */
-    background-color: var(--background);
+    /* Kök zemin = çubuk rengi. Safari, theme-color yoksa çubukları buradan
+       örnekler; aşırı kaydırmada görünen renk de bu olur. */
+    background-color: var(--bar);
   }
 
   body {

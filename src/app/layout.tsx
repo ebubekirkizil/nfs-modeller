@@ -1,3 +1,4 @@
+import { ThemeColorMeta } from "@/components/theme-color-meta";
 import { ThemeProvider } from "@/components/theme-provider";
 import { DATA } from "@/data/resume";
 import { getSiteUrl } from "@/lib/site-url";
@@ -82,6 +83,19 @@ export const metadata: Metadata = {
  */
 export const viewport: Viewport = {
   viewportFit: "cover",
+  /**
+   * iOS Safari durum çubuğunu ve alt araç çubuğunu sayfanın pikselleriyle değil
+   * DÜZ BİR RENKLE boyar; o rengi buradan alır. Değerler gradyanın ekran
+   * kenarındaki tonundan örneklendi (globals.css `--bar`), böylece çubuklar
+   * siyah şerit gibi durmak yerine arka planın devamı gibi görünür.
+   *
+   * Buradaki iki etiket yalnızca ilk boyama için (JS çalışmadan önce) ve işletim
+   * sistemi tercihine bakar; sayfadaki tema düğmesini ThemeColorMeta izler.
+   */
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#e7e4f0" },
+    { media: "(prefers-color-scheme: dark)", color: "#1c1e30" },
+  ],
 };
 
 export default function RootLayout({
@@ -100,6 +114,7 @@ export default function RootLayout({
         )}
       >
         <ThemeProvider attribute="class" defaultTheme="light">
+          <ThemeColorMeta />
           {children}
         </ThemeProvider>
       </body>
