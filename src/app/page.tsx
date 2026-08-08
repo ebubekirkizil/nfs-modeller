@@ -97,7 +97,18 @@ export default function CardPage() {
       {/* Gökkuşağı arka planı + üstünde metni okunur tutan perde.
           Shader yalnızca istemcide ve tema bilindikten sonra kurulur, yoksa
           koyu temada bir an açık renkle başlayıp zıplıyor. */}
-      <div className="pointer-events-none fixed inset-0 z-0">
+      {/* Yükseklik `100lvh`: iOS Safari'de araç çubuğu kaydırırken açılıp
+          kapandığı için görünür alanın yüksekliği sürekli değişiyor. `inset-0`
+          bunu takip edip kapsayıcıyı yeniden boyutlandırıyor, bu da WebGL
+          tuvalinin yeniden ölçeklenip bir kare boş kalmasına — yani "yanıp
+          sönmeye" — yol açıyordu. `lvh` araç çubuğu gizliymiş gibi sabit bir
+          yükseklik verir; hem titreme biter hem de arka plan çubuğun altını da
+          kaplar. Desteklenmeyen tarayıcıda bildirim düşer, `inset-0` devreye
+          girer. */}
+      <div
+        className="pointer-events-none fixed inset-0 z-0"
+        style={{ height: "100lvh" }}
+      >
         {mounted && (
           <Iridescence
             color={isDark ? IRIDESCENCE_COLOR.dark : IRIDESCENCE_COLOR.light}
@@ -110,7 +121,16 @@ export default function CardPage() {
         <div className="absolute inset-0 bg-background/64 dark:bg-background/70" />
       </div>
 
-      <main className="relative z-10 mx-auto flex min-h-dvh w-full max-w-md flex-col items-center justify-center gap-8 px-6 py-16">
+      {/* Dolgu `env(safe-area-inset-*)` ile: viewport-fit=cover sayesinde sayfa
+          çentik ve ana ekran çubuğunun altına kadar uzanıyor, içerik oraya
+          girmesin. */}
+      <main
+        className="relative z-10 mx-auto flex min-h-dvh w-full max-w-md flex-col items-center justify-center gap-8 px-6"
+        style={{
+          paddingTop: "max(4rem, env(safe-area-inset-top))",
+          paddingBottom: "max(4rem, env(safe-area-inset-bottom))",
+        }}
+      >
         <motion.div
           initial="hidden"
           animate="visible"

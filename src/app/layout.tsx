@@ -1,7 +1,8 @@
 import { ThemeProvider } from "@/components/theme-provider";
 import { DATA } from "@/data/resume";
+import { getSiteUrl } from "@/lib/site-url";
 import { cn } from "@/lib/utils";
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -18,16 +19,17 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(DATA.url),
+  // og:image mutlak adrese çevrilirken bu taban kullanılır — bkz. site-url.ts
+  metadataBase: new URL(getSiteUrl()),
   title: {
-    default: DATA.name,
+    default: `${DATA.name} — ${DATA.description}`,
     template: `%s | ${DATA.name}`,
   },
-  description: DATA.description,
+  description: `${DATA.name}, ${DATA.company} bünyesinde ${DATA.location} bölgesinde çalışan ${DATA.description.toLocaleLowerCase("tr-TR")}.`,
   openGraph: {
-    title: DATA.name,
-    description: DATA.description,
-    url: DATA.url,
+    title: `${DATA.name} — ${DATA.description}`,
+    description: `${DATA.company} · ${DATA.location}`,
+    url: getSiteUrl(),
     siteName: DATA.name,
     locale: "tr_TR",
     type: "website",
@@ -44,7 +46,8 @@ export const metadata: Metadata = {
     },
   },
   twitter: {
-    title: DATA.name,
+    title: `${DATA.name} — ${DATA.description}`,
+    description: `${DATA.company} · ${DATA.location}`,
     card: "summary_large_image",
   },
 };
@@ -54,6 +57,20 @@ export const metadata: Metadata = {
  * Sayfa kabuğu (genişlik, arka plan, dock menüsü) her sayfaya aittir —
  * kartvizit sayfası ortalanmış dar bir kolon, /cv ise okunur bir yazı kolonu.
  */
+/**
+ * `viewportFit: "cover"` olmadan iOS Safari sayfayı güvenli alanların içine
+ * hapsediyor; üstte ve altta arka planın ulaşmadığı düz şeritler kalıyor.
+ * `themeColor` de tarayıcı çubuğunu sayfayla aynı renge boyar, böylece ekranın
+ * kenarındaki geçiş görünmez olur.
+ */
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#06070a" },
+  ],
+  viewportFit: "cover",
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{

@@ -120,8 +120,19 @@
     @apply border-border;
   }
 
+  html {
+    /* iOS'ta sayfanın sonuna gelince devreye giren lastik gibi esneme, `fixed`
+       arka planın dışını açığa çıkarıp altındaki düz gövde rengini bir an
+       gösteriyordu — "arka plan kayboldu, sonra geri geldi" hissi bundandı. */
+    overscroll-behavior-y: none;
+    /* Esnemenin engellenemediği durumlarda görünen renk en azından temanın
+       kendi zemini olsun. */
+    background-color: var(--background);
+  }
+
   body {
     @apply bg-background text-foreground;
+    overscroll-behavior-y: none;
   }
 }
 /* MagicUI tema düğmesi (animated-theme-toggler).

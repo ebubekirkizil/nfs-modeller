@@ -36,8 +36,10 @@ const OFFICE = {
 export const DATA = {
   name: "Abdülbaki Meto",
   initials: "AM",
-  // TODO: yayına alınca gerçek alan adını yaz (OG görselleri ve SEO bunu kullanır)
-  url: "https://abdulbakimeto.com",
+  // Sitenin yayındaki adresi. Sosyal medya önizleme görseli ve SEO etiketleri
+  // buradan mutlak adres üretir. Kendi alan adını alınca burayı değiştir
+  // (ya da NEXT_PUBLIC_SITE_URL ortam değişkenini ver) — bkz. src/lib/site-url.ts
+  url: "https://abdulbaki-meto-portfolio.vercel.app",
   /** Çalıştığı firma. Rehber kartında "şirket" alanı olarak görünür. */
   company: OFFICE.company,
   /** İsmin altındaki kısa konum. Tam adres `address` alanında. */
