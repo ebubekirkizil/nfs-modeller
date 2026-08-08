@@ -20,9 +20,16 @@ const CONTACT = {
   tel: "0553 790 26 77",
   /** tel: ve wa.me bağlantıları için: ülke kodu, boşluksuz. */
   telE164: "+905537902677",
-  // TODO: Instagram profil adresi
-  instagram: "https://instagram.com/kullaniciadi",
+  /** Kullanıcı adı; hem bağlantı hem de satırın altındaki etiket bundan üretilir. */
+  instagramHandle: "bbaki.meto",
 };
+
+/**
+ * Paylaş menüsünden gelen adresteki `utm_source` ve `igsh` parametreleri
+ * bilinçli olarak atıldı: bunlar profilin bir parçası değil, bağlantının nereden
+ * kopyalandığını taşıyan izleme etiketleri.
+ */
+const INSTAGRAM_URL = `https://www.instagram.com/${CONTACT.instagramHandle}`;
 
 /** Ofis adresi. Konum satırı ve rehber kartı buradan okur. */
 const OFFICE = {
@@ -110,8 +117,8 @@ export const DATA = {
     },
     {
       label: "Instagram",
-      description: "Güncel paylaşımlar",
-      href: CONTACT.instagram,
+      description: `@${CONTACT.instagramHandle}`,
+      href: INSTAGRAM_URL,
       icon: Icons.instagram,
     },
   ],
@@ -125,7 +132,7 @@ export const DATA = {
         name: "WhatsApp",
         url: `https://wa.me/${CONTACT.telE164.replace(/\D/g, "")}`,
       },
-      Instagram: { name: "Instagram", url: CONTACT.instagram },
+      Instagram: { name: "Instagram", url: INSTAGRAM_URL },
     },
   },
 };

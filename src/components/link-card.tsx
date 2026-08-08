@@ -72,8 +72,9 @@ export function LinkCard({ item }: { item: LinkItem }) {
               // seçildi çünkü beyaz metinle 5.5:1 kontrast verir (emerald-600
               // 3.9:1'de kalıp WCAG AA'yı geçemiyor).
               "border-emerald-700 bg-emerald-700 text-white shadow-sm hover:bg-emerald-600"
-            : // Yarı saydam: arkadaki gökkuşağı hafifçe geçsin, metin okunur kalsın.
-              "border-border/70 bg-card/70 text-card-foreground shadow-xs backdrop-blur-md hover:bg-card/90"
+            : // İçerik kartının içinde duruyor: saydamlık artık gerekmiyor,
+              // yarı saydam olsaydı bulanık zeminin üstünde bulanık görünürdü.
+              "border-border bg-card text-card-foreground shadow-xs hover:bg-muted"
         )}
       >
         <Icon className="size-5 flex-none" />

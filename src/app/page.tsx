@@ -2,29 +2,22 @@
 
 import { LinkCard } from "@/components/link-card";
 import { ModeToggle } from "@/components/mode-toggle";
-import { Iridescence } from "@/components/reactbits/iridescence";
+import { GridMotion } from "@/components/reactbits/grid-motion";
 import { SiteFooter } from "@/components/site-footer";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DATA } from "@/data/resume";
-import { useMounted } from "@/hooks/use-mounted";
 import { cn } from "@/lib/utils";
 import { MapPin } from "lucide-react";
 import { motion, useReducedMotion, type Variants } from "motion/react";
-import { useTheme } from "next-themes";
 
-/**
- * Gökkuşağı arka planının tema başına ana rengi (0-1 RGB).
- *
- * Açık temada koyu, koyu temada açık: her iki durumda da arka plan zemine
- * yaklaşmak yerine ondan ayrışsın, böylece efekt gerçekten görünür olsun.
- */
-const IRIDESCENCE_COLOR = {
-  light: [0.78, 0.76, 0.88],
-  dark: [0.6, 0.54, 0.82],
-} as const;
+/** Arka plandaki ızgarayı dolduran görseller (public/homes). */
+const HOME_PHOTOS = Array.from(
+  { length: 14 },
+  (_, i) => `/homes/${String(i + 1).padStart(2, "0")}.jpg`
+);
 
 /** Profil fotoğrafının çapı (px). Rozetler bundan türetilir. */
-const AVATAR_SIZE = 116;
+const AVATAR_SIZE = 128;
 /** İki rozetin de çapı (px) — güneydoğu ve kuzeydoğu aynı boyutta. */
 const BADGE_SIZE = 32;
 /** Rozetlerin içindeki simge boyutu. Emoji ve güneş/ay ikonu eşit görünsün
@@ -62,9 +55,6 @@ const badgeStyle = (point: { left: number; top: number }) => ({
 
 export default function CardPage() {
   const reduceMotion = useReducedMotion();
-  const { resolvedTheme } = useTheme();
-  const mounted = useMounted();
-  const isDark = resolvedTheme === "dark";
 
   // Hareketi azaltma tercihinde yalnızca opaklık geçişi kalır.
   const container: Variants = {
@@ -94,18 +84,14 @@ export default function CardPage() {
 
   return (
     <>
-      {/* Gökkuşağı arka planı + üstünde metni okunur tutan perde.
-          Shader yalnızca istemcide ve tema bilindikten sonra kurulur, yoksa
-          koyu temada bir an açık renkle başlayıp zıplıyor. */}
-      {/* Arka plan bilinçli olarak ekrandan taşırılıyor:
+      {/* Lüks konut fotoğraflarından oluşan eğik ızgara + okunurluk perdesi.
+          Kutu bilinçli olarak ekrandan taşırılıyor:
           - Yükseklik `100lvh` (araç çubuğu gizliymiş gibi en büyük yükseklik).
             Safari'nin çubuğu kaydırırken açılıp kapanması görünür alanın
-            yüksekliğini değiştiriyor; `inset-0` bunu takip edince WebGL tuvali
-            sürekli yeniden boyutlanıp bir kare boş kalıyordu ("yanıp sönme").
-            `lvh` sabit kaldığı için titreme biter.
-          - Üstte ve altta `env(safe-area-inset-*)` kadar taşma: gradyan durum
-            çubuğunun ve alt araç çubuğunun altına kadar uzansın, çubuklar
-            gradyanın üzerinde yüzüyormuş gibi dursun. */}
+            yüksekliğini değiştiriyor; `inset-0` bunu takip edince arka plan
+            sürekli yeniden boyutlanıyordu. `lvh` sabit kaldığı için titremez.
+          - Üstte ve altta `env(safe-area-inset-*)` kadar taşma: arka plan durum
+            çubuğunun ve alt araç çubuğunun altına kadar uzansın. */}
       <div
         className="pointer-events-none fixed z-0"
         style={{
@@ -116,16 +102,18 @@ export default function CardPage() {
             "calc(100lvh + env(safe-area-inset-top, 0px) + env(safe-area-inset-bottom, 0px))",
         }}
       >
-        {mounted && (
-          <Iridescence
-            color={isDark ? IRIDESCENCE_COLOR.dark : IRIDESCENCE_COLOR.light}
-            speed={0.6}
-            amplitude={0.1}
-            mouseReact
-            paused={reduceMotion ?? false}
-          />
-        )}
-        <div className="absolute inset-0 bg-background/64 dark:bg-background/70" />
+        {/* Sunucuda da render ediliyor: tarayıcı görselleri HTML'i ayrıştırırken
+            indirmeye başlasın, hidrasyonu beklemesin. Bileşen `window`a render
+            sırasında dokunmuyor, animasyon yalnızca useEffect'te başlıyor. */}
+        <GridMotion items={HOME_PHOTOS} paused={reduceMotion ?? false} />
+        {/* Okunurluk perdesi. Evler görünsün diye bilinçli olarak ince tutuldu;
+            metnin okunurluğu esas olarak bağlantı kartlarının kendi zemininden
+            (bg-card/70 + backdrop-blur) geliyor. Fotoğrafları daha çok/az
+            göstermek için değiştirilecek tek yer burası. */}
+        {/* Sayfa geneli perde artık çok ince: okunurluğu içerik kartı
+            üstleniyor, bu katman yalnızca fotoğrafların kontrastını biraz
+            yumuşatıyor. Böylece kartın dışında evler net görünüyor. */}
+        <div className="absolute inset-0 bg-background/25 dark:bg-background/40" />
       </div>
 
       {/* Dolgu `env(safe-area-inset-*)` ile: viewport-fit=cover sayesinde sayfa
@@ -138,11 +126,14 @@ export default function CardPage() {
           paddingBottom: "max(4rem, env(safe-area-inset-bottom))",
         }}
       >
+        {/* İçerik kartı: metnin okunurluğunu tamamen bu katman sağlıyor.
+            `backdrop-blur-2xl` yalnızca kartın altındaki fotoğrafları
+            bulanıklaştırır — kartın dışında evler net kalır. */}
         <motion.div
           initial="hidden"
           animate="visible"
           variants={container}
-          className="flex w-full flex-col items-center gap-8"
+          className="flex w-full flex-col items-center gap-8 rounded-3xl border border-border/60 bg-background/85 p-6 shadow-2xl backdrop-blur-2xl sm:p-8 dark:bg-background/80"
         >
           <motion.div
             variants={item}
