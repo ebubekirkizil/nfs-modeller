@@ -4,7 +4,20 @@ import { getSiteUrl } from "@/lib/site-url";
 import { cn } from "@/lib/utils";
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
+
+/**
+ * Yalnızca isim için. Dosya depoda: aynı dosyayı sosyal medya önizleme görseli
+ * de okuyor (src/app/opengraph-image.tsx), böylece sayfadaki ve paylaşım
+ * kartındaki yazı tipi birebir aynı oluyor.
+ */
+const playfair = localFont({
+  src: "../fonts/PlayfairDisplay-Bold.ttf",
+  variable: "--font-display",
+  weight: "700",
+  display: "swap",
+});
 
 const geist = Geist({
   subsets: ["latin"],
@@ -58,16 +71,16 @@ export const metadata: Metadata = {
  * kartvizit sayfası ortalanmış dar bir kolon, /cv ise okunur bir yazı kolonu.
  */
 /**
- * `viewportFit: "cover"` olmadan iOS Safari sayfayı güvenli alanların içine
- * hapsediyor; üstte ve altta arka planın ulaşmadığı düz şeritler kalıyor.
- * `themeColor` de tarayıcı çubuğunu sayfayla aynı renge boyar, böylece ekranın
- * kenarındaki geçiş görünmez olur.
+ * `viewportFit: "cover"`: sayfa çentiğin ve ana ekran çubuğunun altına kadar
+ * uzansın, arka plan ekranın fiziksel kenarlarına ulaşsın.
+ *
+ * `themeColor` BİLEREK yok. Verildiğinde iOS Safari durum çubuğunu ve alt
+ * araç çubuğunu o düz renkle boyuyor — arka plandaki gradyanın üstünü kapatan
+ * siyah şeritler tam olarak bundan çıkıyordu. Belirtilmediğinde Safari
+ * çubukları sayfanın kendi içeriğinden örnekler ve gradyan çubukların altında
+ * görünmeye devam eder.
  */
 export const viewport: Viewport = {
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#06070a" },
-  ],
   viewportFit: "cover",
 };
 
@@ -82,7 +95,8 @@ export default function RootLayout({
         className={cn(
           "min-h-screen bg-background font-sans antialiased relative",
           geist.variable,
-          geistMono.variable
+          geistMono.variable,
+          playfair.variable
         )}
       >
         <ThemeProvider attribute="class" defaultTheme="light">

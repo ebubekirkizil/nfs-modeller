@@ -30,8 +30,17 @@ async function loadAvatar(): Promise<string | null> {
   }
 }
 
+/** Satori'ye yazı tipini ikili olarak vermek gerekiyor; ağdan değil diskten. */
+async function loadFont(file: string) {
+  return readFile(path.join(process.cwd(), "src", "fonts", file));
+}
+
 export default async function Image() {
-  const avatar = await loadAvatar();
+  const [avatar, playfair, geist] = await Promise.all([
+    loadAvatar(),
+    loadFont("PlayfairDisplay-Bold.ttf"),
+    loadFont("Geist-Regular.ttf"),
+  ]);
 
   return new ImageResponse(
     (
@@ -44,6 +53,8 @@ export default async function Image() {
           gap: 56,
           backgroundColor: "#0b0c10",
           padding: "0 80px",
+          // İsim dışındaki her şey sayfadaki gibi Geist.
+          fontFamily: "Geist",
         }}
       >
         {avatar && (
@@ -64,10 +75,11 @@ export default async function Image() {
         <div style={{ display: "flex", flexDirection: "column" }}>
           <div
             style={{
-              fontSize: 68,
+              fontFamily: "Playfair Display",
+              fontSize: 76,
               fontWeight: 700,
               color: "#f4f5f7",
-              letterSpacing: "-0.03em",
+              letterSpacing: "-0.01em",
               lineHeight: 1.1,
             }}
           >
@@ -84,6 +96,12 @@ export default async function Image() {
         </div>
       </div>
     ),
-    size
+    {
+      ...size,
+      fonts: [
+        { name: "Playfair Display", data: playfair, weight: 700, style: "normal" },
+        { name: "Geist", data: geist, weight: 400, style: "normal" },
+      ],
+    }
   );
 }

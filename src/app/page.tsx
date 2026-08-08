@@ -97,17 +97,24 @@ export default function CardPage() {
       {/* Gökkuşağı arka planı + üstünde metni okunur tutan perde.
           Shader yalnızca istemcide ve tema bilindikten sonra kurulur, yoksa
           koyu temada bir an açık renkle başlayıp zıplıyor. */}
-      {/* Yükseklik `100lvh`: iOS Safari'de araç çubuğu kaydırırken açılıp
-          kapandığı için görünür alanın yüksekliği sürekli değişiyor. `inset-0`
-          bunu takip edip kapsayıcıyı yeniden boyutlandırıyor, bu da WebGL
-          tuvalinin yeniden ölçeklenip bir kare boş kalmasına — yani "yanıp
-          sönmeye" — yol açıyordu. `lvh` araç çubuğu gizliymiş gibi sabit bir
-          yükseklik verir; hem titreme biter hem de arka plan çubuğun altını da
-          kaplar. Desteklenmeyen tarayıcıda bildirim düşer, `inset-0` devreye
-          girer. */}
+      {/* Arka plan bilinçli olarak ekrandan taşırılıyor:
+          - Yükseklik `100lvh` (araç çubuğu gizliymiş gibi en büyük yükseklik).
+            Safari'nin çubuğu kaydırırken açılıp kapanması görünür alanın
+            yüksekliğini değiştiriyor; `inset-0` bunu takip edince WebGL tuvali
+            sürekli yeniden boyutlanıp bir kare boş kalıyordu ("yanıp sönme").
+            `lvh` sabit kaldığı için titreme biter.
+          - Üstte ve altta `env(safe-area-inset-*)` kadar taşma: gradyan durum
+            çubuğunun ve alt araç çubuğunun altına kadar uzansın, çubuklar
+            gradyanın üzerinde yüzüyormuş gibi dursun. */}
       <div
-        className="pointer-events-none fixed inset-0 z-0"
-        style={{ height: "100lvh" }}
+        className="pointer-events-none fixed z-0"
+        style={{
+          top: "calc(-1 * env(safe-area-inset-top, 0px))",
+          left: 0,
+          right: 0,
+          height:
+            "calc(100lvh + env(safe-area-inset-top, 0px) + env(safe-area-inset-bottom, 0px))",
+        }}
       >
         {mounted && (
           <Iridescence
@@ -197,7 +204,13 @@ export default function CardPage() {
               </motion.div>
             </div>
             <div className="flex flex-col items-center gap-1.5">
-              <h1 className="text-2xl font-semibold tracking-tighter sm:text-3xl">
+              {/* Playfair Display yalnızca isimde. Serif olduğu için sıkı
+                  `tracking-tighter` yerine normal harf aralığı daha iyi
+                  duruyor. */}
+              <h1
+                className="text-3xl font-bold tracking-tight sm:text-4xl"
+                style={{ fontFamily: "var(--font-display)" }}
+              >
                 {DATA.name}
               </h1>
               <p className="max-w-xs text-balance text-sm text-muted-foreground">
