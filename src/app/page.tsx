@@ -2,7 +2,7 @@
 
 import { LinkCard } from "@/components/link-card";
 import { ModeToggle } from "@/components/mode-toggle";
-import { GridMotion } from "@/components/reactbits/grid-motion";
+import { Iridescence } from "@/components/reactbits/iridescence";
 import { SiteFooter } from "@/components/site-footer";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DATA } from "@/data/resume";
@@ -10,11 +10,6 @@ import { cn } from "@/lib/utils";
 import { MapPin } from "lucide-react";
 import { motion, useReducedMotion, type Variants } from "motion/react";
 
-/** Arka plandaki ızgarayı dolduran görseller (public/homes). */
-const HOME_PHOTOS = Array.from(
-  { length: 14 },
-  (_, i) => `/homes/${String(i + 1).padStart(2, "0")}.jpg`
-);
 
 /** Profil fotoğrafının çapı (px). Rozetler bundan türetilir. */
 const AVATAR_SIZE = 128;
@@ -102,18 +97,10 @@ export default function CardPage() {
             "calc(100lvh + env(safe-area-inset-top, 0px) + env(safe-area-inset-bottom, 0px))",
         }}
       >
-        {/* Sunucuda da render ediliyor: tarayıcı görselleri HTML'i ayrıştırırken
-            indirmeye başlasın, hidrasyonu beklemesin. Bileşen `window`a render
-            sırasında dokunmuyor, animasyon yalnızca useEffect'te başlıyor. */}
-        <GridMotion items={HOME_PHOTOS} paused={reduceMotion ?? false} />
-        {/* Okunurluk perdesi. Evler görünsün diye bilinçli olarak ince tutuldu;
-            metnin okunurluğu esas olarak bağlantı kartlarının kendi zemininden
-            (bg-card/70 + backdrop-blur) geliyor. Fotoğrafları daha çok/az
-            göstermek için değiştirilecek tek yer burası. */}
-        {/* Sayfa geneli perde artık çok ince: okunurluğu içerik kartı
-            üstleniyor, bu katman yalnızca fotoğrafların kontrastını biraz
-            yumuşatıyor. Böylece kartın dışında evler net görünüyor. */}
-        <div className="absolute inset-0 bg-background/25 dark:bg-background/40" />
+        {/* Teknolojik, modern, inovatif arka plan animasyonu */}
+        <Iridescence color={[0.1, 0.4, 0.8]} mouseReact={true} paused={reduceMotion ?? false} />
+        {/* Sayfa geneli perde: okunurluğu korumak için */}
+        <div className="absolute inset-0 bg-background/40 dark:bg-background/60" />
       </div>
 
       {/* Dolgu `env(safe-area-inset-*)` ile: viewport-fit=cover sayesinde sayfa
