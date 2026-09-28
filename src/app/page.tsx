@@ -1,5 +1,7 @@
 "use client";
 
+import { useState, useEffect } from "react";
+
 import { LinkCard } from "@/components/link-card";
 import { ModeToggle } from "@/components/mode-toggle";
 import { Iridescence } from "@/components/reactbits/iridescence";
@@ -49,7 +51,27 @@ const badgeStyle = (point: { left: number; top: number }) => ({
 });
 
 export default function CardPage() {
+  const [bgKey, setBgKey] = useState(0);
   const reduceMotion = useReducedMotion();
+
+  useEffect(() => {
+    function handleVisibilityChange() {
+      if (!document.hidden) {
+        // iOS Safari BFCache dönüşünde WebGL context'i kaybediyor olabilir.
+        // Geri dönüldüğünde arka planı tamamen sıfırdan mount etmek için key'i artır.
+        setBgKey((prev) => prev + 1);
+      }
+    }
+    
+    // Hem sekme aktifliği (visibility) hem de BFCache dönüşü için dinle
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    window.addEventListener("pageshow", handleVisibilityChange);
+    
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      window.removeEventListener("pageshow", handleVisibilityChange);
+    };
+  }, []);
 
   // Hareketi azaltma tercihinde yalnızca opaklık geçişi kalır.
   const container: Variants = {
@@ -98,7 +120,7 @@ export default function CardPage() {
         }}
       >
         {/* Teknolojik, modern, inovatif arka plan animasyonu */}
-        <Iridescence color={[0.1, 0.4, 0.8]} mouseReact={true} paused={reduceMotion ?? false} />
+        <Iridescence key={bgKey} color={[0.1, 0.4, 0.8]} mouseReact={true} paused={reduceMotion ?? false} />
         {/* Sayfa geneli perde: okunurluğu korumak için */}
         <div className="absolute inset-0 bg-background/40 dark:bg-background/60" />
       </div>
@@ -152,26 +174,12 @@ export default function CardPage() {
                   <AvatarImage
                     alt={DATA.name}
                     src={DATA.avatarUrl}
-                    className="transition-transform duration-500 group-hover:scale-110"
+                    className="object-cover transition-transform duration-500 group-hover:scale-110"
                   />
                   <AvatarFallback className="text-xl">
                     {DATA.initials}
                   </AvatarFallback>
                 </Avatar>
-
-                {/* Güneydoğu (−45°) */}
-                <span
-                  role="img"
-                  aria-label={DATA.status.label}
-                  style={{
-                    ...badgeStyle(SE),
-                    fontSize: BADGE_ICON_SIZE,
-                    lineHeight: 1,
-                  }}
-                  className={BADGE_CLASS}
-                >
-                  {DATA.status.emoji}
-                </span>
 
                 {/* Kuzeydoğu (+45°). Fotoğrafla aynı hover animasyonuna
                     katılsın diye motion kutusunun içinde. */}
@@ -194,15 +202,6 @@ export default function CardPage() {
               <p className="max-w-xs text-balance text-sm text-muted-foreground">
                 {DATA.description}
               </p>
-              <a
-                href={DATA.locationLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-1 inline-flex items-center gap-1 rounded-sm text-xs text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-              >
-                <MapPin className="size-3" aria-hidden />
-                {DATA.location}
-              </a>
             </div>
           </motion.div>
 

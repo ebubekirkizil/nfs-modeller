@@ -2,8 +2,8 @@ import { cn } from "@/lib/utils";
 
 /** Siteyi yapan kişi. Kullanıcı adı ve profil adresi tek yerde. */
 const BUILDER = {
-  handle: "yhcelebi",
-  url: "https://yhcelebi.com",
+  handle: "SentientWire",
+  url: "https://sentientwire.com",
 };
 
 /** Sayfa altındaki telif satırı. */

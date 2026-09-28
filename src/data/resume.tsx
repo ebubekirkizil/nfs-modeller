@@ -9,7 +9,7 @@ import { GlobeIcon, UserPlusIcon } from "lucide-react";
  */
 
 const CONTACT = {
-  email: "iletisim@sentientwire.com", // Daha sonra eklenecek/değiştirilecek
+  email: "ebukizil@gmail.com", // Daha sonra eklenecek/değiştirilecek
   tel: "0551 069 88 12",
   telE164: "+905510698812",
   instagramHandle: "ebubekir.kizildas", 
@@ -31,7 +31,7 @@ export const DATA = {
     city: "",
     country: "Türkiye",
   },
-  description: "Dijital Pazarlama, Yazılım ve Otomasyon Uzmanı",
+  description: "Dijital Pazarlama Uzmanı",
   avatarUrl: "/ebubekir-kizildas/me.jpg",
 
   status: {

@@ -160,11 +160,37 @@ export function Iridescence({
       uMouse[1] = y;
     }
     window.addEventListener("mousemove", handleMouseMove);
+    function handleVisibilityChange() {
+      if (!document.hidden) {
+        // iOS Safari BFCache'den dnǬYte requestAnimationFrame dngǬsǬnǬ kaybedebilir.
+        // GrǬnǬr olduYunda dngǬyǬ tekrar tetikleyerek animasyonun donmasn nleriz.
+        cancelAnimationFrame(animateId);
+        animateId = requestAnimationFrame(update);
+      }
+    }
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    window.addEventListener("pageshow", handleVisibilityChange);
+
+    function handleContextLost(e: Event) {
+      e.preventDefault();
+      cancelAnimationFrame(animateId);
+    }
+    function handleContextRestored() {
+      renderer.render({ scene: mesh });
+      cancelAnimationFrame(animateId);
+      animateId = requestAnimationFrame(update);
+    }
+    gl.canvas.addEventListener("webglcontextlost", handleContextLost, false);
+    gl.canvas.addEventListener("webglcontextrestored", handleContextRestored, false);
 
     return () => {
       cancelAnimationFrame(animateId);
       observer.disconnect();
       window.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      window.removeEventListener("pageshow", handleVisibilityChange);
+      gl.canvas.removeEventListener("webglcontextlost", handleContextLost);
+      gl.canvas.removeEventListener("webglcontextrestored", handleContextRestored);
       programRef.current = null;
       gl.canvas.remove();
       gl.getExtension("WEBGL_lose_context")?.loseContext();
